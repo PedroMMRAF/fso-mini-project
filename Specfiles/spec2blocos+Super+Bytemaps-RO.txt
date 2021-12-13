@@ -1,0 +1,13 @@
+###
+#This spec reads a formatted disk probably
+#with some information and prints the tables
+M disk0 1
+# above Mount command leaves disk open, that is correct
+i
+# // Initialize BITMAP TABLE indexes
+T 1
+#Print Inode bytemap large
+T 0
+#Print Inode bytemap small
+T 2
+#Print Data bytemap
