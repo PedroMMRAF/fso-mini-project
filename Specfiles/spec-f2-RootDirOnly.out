@@ -1,0 +1,36 @@
+D disk0 100	Create OK
+F disk0	2	Formatting...
+Superblock:
+  fsmagic          = 0xf0f03410
+  nblocks          = 100
+  nbmapblocksinodes= 1
+  ninodeblocks     = 2
+  ninodes          = 96
+  nbmapblocksdata  = 1
+  ndatablocks      = 94
+  startInArea      = 2
+  startRotdir      = 4
+  startDtBmap      = 5
+  startDtArea      = 6
+  mounted          = yes
+O		OK
+Printing valid directory entries -----------
+e	AAAA	1	OK
+e	AAA	2	OK
+e	AA	3	OK
+e	A	4	OK
+e	BBBB	5	OK
+e	AAA	6	ERROR
+Printing valid directory entries -----------
+00: AAAA 01
+01:  AAA 02
+02:   AA 03
+03:    A 04
+04: BBBB 05
+t	A	OK
+t	AAA	OK
+t	AA	OK
+t	AAAA	OK
+t	BBBB	OK
+Printing valid directory entries -----------
+C		OK

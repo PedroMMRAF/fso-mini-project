@@ -1,0 +1,157 @@
+D disk0 100	Create OK
+F disk0	2	Formatting...
+Superblock:
+  fsmagic          = 0xf0f03410
+  nblocks          = 100
+  nbmapblocksinodes= 1
+  ninodeblocks     = 2
+  ninodes          = 96
+  nbmapblocksdata  = 1
+  ndatablocks      = 94
+  startInArea      = 2
+  startRotdir      = 4
+  startDtBmap      = 5
+  startDtArea      = 6
+  mounted          = yes
+Printing the small inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the large inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the data blocks bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+inode write: a 96 C	ERROR
+Inode: 0
+  isvalid= yes
+  type   = I
+  size   = 0
+  Direct ptrs:
+    [0]= 0
+    [1]= 0
+    [2]= 0
+    [3]= 0
+    [4]= 0
+  Indirect ptrs:
+    [5]= 0
+Inode: 15
+  isvalid= yes
+  type   = I
+  size   = 0
+  Direct ptrs:
+    [0]= 0
+    [1]= 0
+    [2]= 0
+    [3]= 0
+    [4]= 0
+  Indirect ptrs:
+    [5]= 0
+Inode: 16
+  isvalid= yes
+  type   = I
+  size   = 0
+  Direct ptrs:
+    [0]= 0
+    [1]= 0
+    [2]= 0
+    [3]= 0
+    [4]= 0
+  Indirect ptrs:
+    [5]= 0
+Inode: 31
+  isvalid= yes
+  type   = I
+  size   = 0
+  Direct ptrs:
+    [0]= 0
+    [1]= 0
+    [2]= 0
+    [3]= 0
+    [4]= 0
+  Indirect ptrs:
+    [5]= 0
+Inode: 32
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Inode: 47
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Inode: 48
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Inode: 63
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Inode: 64
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Inode: 79
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Inode: 80
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Inode: 95
+  isvalid= yes
+  type   = C
+  size   = 0
+  start  = 0
+  end    = 0
+Printing the small inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the large inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the data blocks bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Printing the small inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the large inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the data blocks bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 

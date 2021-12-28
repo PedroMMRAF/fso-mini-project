@@ -1,0 +1,62 @@
+###
+#This spec creates and formats a disk
+#writes some bytemap entries and prints the tables
+D disk0 100
+#Format disk
+F disk0 2
+#Mount disk
+M disk0 1
+#Print large inodes bytemap
+B 1
+#Print small inodes bytemap
+B 0
+#Print data blocks bytemap
+B 2
+#Set some bytemap entries to 1
+#on small
+s 0 32 1 1
+s 0 47 1 1
+#on large
+s 1 0 1 1
+s 1 15 1 1
+#on data
+s 2 0 1 1
+s 2 17 1 1
+s 2 34 1 1
+#Print large inodes bytemap
+B 1
+#Print small inodes bytemap
+B 0
+#Print data blocks bytemap
+B 2
+#Get the location of the 1st free bmap entry
+#NOTE: the commented lines such as #g 0 14
+#  should be uncommented to test "n"
+#  contiguous free entries
+#  FIRST, code and test ONLY 1 free entry
+#on small
+g 0 1
+#g 0 14
+#g 0 15
+#on large
+g 1 1
+#g 1 14
+#on data
+g 2 1
+#g 2 16
+#Set the same bytemap entries to 0
+#on small
+s 0 32 1 0
+s 0 47 1 0
+#on large
+s 1 0 1 0
+s 1 15 1 0
+#on data
+s 2 0 1 0
+s 2 17 1 0
+s 2 34 1 0
+B 0
+B 1
+B 2
+#Unmount the disk
+U

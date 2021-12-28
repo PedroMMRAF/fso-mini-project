@@ -36,6 +36,7 @@ struct bmapMData {
      errors:
        -ENOSPC there are no free entries
        those resulting from disk operations
+   TBD: "howMany" ignored, only works for 1 entry
 
    set: set an entry to some value (0/1), UPDATES disk image
      parameters:
@@ -60,7 +61,6 @@ int bytemap_print_table(unsigned int bmapIDX);
 struct bytemap_operations {
   void (*init)();
   int (*getfree)(unsigned int bmapIDX, unsigned int howMany);
-  int (*set)(unsigned int bmapIDX, \
-		unsigned int entry, unsigned int howMany, unsigned char set);
+  int (*set)(unsigned int bmapIDX, unsigned int entry, unsigned int set);
 };
 

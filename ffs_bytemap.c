@@ -28,55 +28,52 @@ static struct bmapMData bmapMD[NBR_OF_BMAPS];
 
 int bytemap_print_table(unsigned int bmapIDX)
 {
-    int ercode;
-    unsigned char bmap[DISK_BLOCK_SIZE];
-    char msg[16];
+  int ercode;
+  unsigned char bmap[DISK_BLOCK_SIZE];
+  char msg[16];
 
-    int entriesLeft, scan;
+  int entriesLeft, scan;
 
-    // read in the bytemap
-    ercode = disk_ops.read(bmapMD[bmapIDX].diskBlock, bmap);
-    if (ercode < 0)
-        return ercode;
+  // read in the bytemap
+  ercode = disk_ops.read(bmapMD[bmapIDX].diskBlock, bmap);
+  if (ercode < 0)
+    return ercode;
 
-    // Scan the bytemap
+  // Scan the bytemap
 
-    switch (bmapIDX)
-    {
-    case LRG_INODE_BMAP:
-        scan = bmapMD[LRG_INODE_BMAP].BMstart;
-        entriesLeft = bmapMD[LRG_INODE_BMAP].BMend - bmapMD[LRG_INODE_BMAP].BMstart;
-        sprintf(msg, "%s", "large inodes");
-        break;
+  switch (bmapIDX)
+  {
+  case LRG_INODE_BMAP:
+    sprintf(msg, "%s", "large inodes");
+    break;
 
-    case SML_INODE_BMAP:
-        scan = bmapMD[SML_INODE_BMAP].BMstart;
-        entriesLeft = bmapMD[SML_INODE_BMAP].BMend - bmapMD[SML_INODE_BMAP].BMstart;
-        sprintf(msg, "%s", "small inodes");
-        break;
+  case SML_INODE_BMAP:
+    sprintf(msg, "%s", "small inodes");
+    break;
 
-    case DATA_BMAP:
-        scan = bmapMD[DATA_BMAP].BMstart;
-        entriesLeft = bmapMD[DATA_BMAP].BMend;
-        sprintf(msg, "%s", "data blocks");
-        break;
-    }
+  case DATA_BMAP:
+    sprintf(msg, "%s", "data blocks");
+    break;
+  }
 
-    printf("Printing the %s bytemap ----------\n", msg);
-    // prints 16 entries per line
-    while (entriesLeft)
-    {
-        if ((scan + 1) % 16)
-            printf("%u ", bmap[scan]);
-        else
-            printf("%u\n", bmap[scan]);
-        entriesLeft--;
-        scan++;
-    }
-    if (scan % 16)
-        printf("\n"); // last NL for general case
+  scan = bmapMD[bmapIDX].BMstart;
+  entriesLeft = bmapMD[bmapIDX].BMend - bmapMD[bmapIDX].BMstart;
 
-    return 0;
+  printf("Printing the %s bytemap ----------\n", msg);
+  // prints 16 entries per line
+  while (entriesLeft)
+  {
+    if ((scan + 1) % 16)
+      printf("%u ", bmap[scan]);
+    else
+      printf("%u\n", bmap[scan]);
+    entriesLeft--;
+    scan++;
+  }
+  if (scan % 16)
+    printf("\n"); // last NL for general case
+
+  return 0;
 }
 
 /* bytemap operations */
@@ -88,17 +85,18 @@ int bytemap_print_table(unsigned int bmapIDX)
 
 static void bytemap_init()
 {
-    bmapMD[LRG_INODE_BMAP].diskBlock = BMi_OFFSET;
-    bmapMD[LRG_INODE_BMAP].BMstart = 0;
-    bmapMD[LRG_INODE_BMAP].BMend = LRG_INOS_PER_BLK;
 
-    bmapMD[SML_INODE_BMAP].diskBlock = BMi_OFFSET;
-    bmapMD[SML_INODE_BMAP].BMstart = LRG_INOS_PER_BLK;
-    bmapMD[SML_INODE_BMAP].BMend = LRG_INOS_PER_BLK + SML_INOS_PER_BLK;
+  bmapMD[LRG_INODE_BMAP].diskBlock = BMi_OFFSET;
+  bmapMD[LRG_INODE_BMAP].BMstart = 0;
+  bmapMD[LRG_INODE_BMAP].BMend = LRG_INOS_PER_BLK * (super_ops.getNinodeblocks() / 2);
 
-    bmapMD[DATA_BMAP].diskBlock = super_ops.getStartDtBmap();
-    bmapMD[DATA_BMAP].BMstart = 0;
-    bmapMD[DATA_BMAP].BMend = super_ops.getNdatablocks();
+  bmapMD[SML_INODE_BMAP].diskBlock = BMi_OFFSET;
+  bmapMD[SML_INODE_BMAP].BMstart = bmapMD[LRG_INODE_BMAP].BMend;
+  bmapMD[SML_INODE_BMAP].BMend = super_ops.getTotalInodes();
+
+  bmapMD[DATA_BMAP].diskBlock = super_ops.getStartDtBmap();
+  bmapMD[DATA_BMAP].BMstart = 0;
+  bmapMD[DATA_BMAP].BMend = super_ops.getNdatablocks();
 }
 
 /***
@@ -111,52 +109,44 @@ static void bytemap_init()
        those resulting from disk operations				***/
 
 static int bytemap_set(unsigned int bmapIDX, unsigned int entry,
-                       unsigned int set)
+                       unsigned int howMany, unsigned char set)
 {
-    int ercode;
-    unsigned char bmap[DISK_BLOCK_SIZE];
-    unsigned int max, min;
+  int ercode;
+  unsigned char bmap[DISK_BLOCK_SIZE];
+  unsigned int max, min;
 
-    switch (bmapIDX)
-    {
+  min = bmapMD[bmapIDX].BMstart;
+  max = bmapMD[bmapIDX].BMend;
 
-    case LRG_INODE_BMAP:
-        min = bmapMD[LRG_INODE_BMAP].BMstart;
-        max = bmapMD[LRG_INODE_BMAP].BMend;
-        break;
+  if (entry >= max)
+    return -EFBIG;
+  if (entry < min)
+    return -EFBIG; // Bug elsewhere and unsigned !!!
 
-    case SML_INODE_BMAP:
-        min = bmapMD[SML_INODE_BMAP].BMstart;
-        max = bmapMD[SML_INODE_BMAP].BMend;
-        break;
+  // read in the bytemap
+  ercode = disk_ops.read(bmapMD[bmapIDX].diskBlock, bmap);
+  if (ercode < 0)
+    return ercode;
 
-    case DATA_BMAP:
-        min = bmapMD[DATA_BMAP].BMstart;
-        max = bmapMD[DATA_BMAP].BMend;
-        break;
-    }
+  /* ---- AULA1, only handles 1 byte allocated
+  if (bmap[entry] == set) return -EINVAL;
+  else bmap[entry]= set;
+---- We now need to handle howMany bytes contiguously allocated */
 
-    if (entry >= max)
-        return -EFBIG;
-    if (entry < min)
-        return -EFBIG; // Bug elsewhere and unsigned !!!
+  for (int i = 0; i < howMany; i++)
+  {
+    if (bmap[entry + i] == set)
+      return -EINVAL;
 
-    // read in the bytemap
-    ercode = disk_ops.read(BMi_OFFSET, bmap);
-    if (ercode < 0)
-        return ercode;
+    bmap[entry + i] = set;
+  }
 
-    if (bmap[entry] == set)
-        return -EINVAL;
-    else
-        bmap[entry] = set;
+  // update the bytemap
+  ercode = disk_ops.write(bmapMD[bmapIDX].diskBlock, bmap);
+  if (ercode < 0)
+    return ercode;
 
-    // update the bytemap
-    ercode = disk_ops.write(BMi_OFFSET, bmap);
-    if (ercode < 0)
-        return ercode;
-
-    return entry;
+  return entry;
 }
 
 /***
@@ -172,52 +162,36 @@ static int bytemap_set(unsigned int bmapIDX, unsigned int entry,
 
 static int bytemap_getfree(unsigned int bmapIDX, unsigned int howMany)
 {
-    int ercode;
-    unsigned char bmap[DISK_BLOCK_SIZE];
+  int ercode;
+  unsigned char bmap[DISK_BLOCK_SIZE];
 
-    int entriesLeft, scan;
-    int found = 0;
+  int entriesLeft, scan;
+  int found = 0;
 
-    // read in the bytemap
-    ercode = disk_ops.read(bmapMD[bmapIDX].diskBlock, bmap);
-    if (ercode < 0)
-        return ercode;
+  // read in the bytemap
+  ercode = disk_ops.read(bmapMD[bmapIDX].diskBlock, bmap);
+  if (ercode < 0)
+    return ercode;
 
-    // Scan the bytemap
+  // Scan the bytemap
+  scan = bmapMD[bmapIDX].BMstart;
+  entriesLeft = bmapMD[bmapIDX].BMend - bmapMD[bmapIDX].BMstart;
 
-    switch (bmapIDX)
-    {
-    case LRG_INODE_BMAP:
-        scan = bmapMD[LRG_INODE_BMAP].BMstart;
-        entriesLeft = bmapMD[LRG_INODE_BMAP].BMend - bmapMD[LRG_INODE_BMAP].BMstart;
-        break;
+  while (entriesLeft && found < howMany)
+  {
+    if (!bmap[scan])
+      found++;
+    else
+      found = 0;
 
-    case SML_INODE_BMAP:
-        scan = bmapMD[SML_INODE_BMAP].BMstart;
-        entriesLeft = bmapMD[SML_INODE_BMAP].BMend - bmapMD[SML_INODE_BMAP].BMstart;
-        break;
+    scan++;
+    entriesLeft--;
+  }
 
-    case DATA_BMAP:
-        scan = bmapMD[DATA_BMAP].BMstart;
-        entriesLeft = bmapMD[DATA_BMAP].BMend;
-        break;
-    }
+  if (found == howMany)
+    return scan - howMany;
 
-    while (entriesLeft && !found)
-    {
-        if (!bmap[scan])
-        {
-            found = 1;
-            break;
-        }
-        scan++;
-        entriesLeft--;
-    }
-
-    if (found)
-        return scan;
-
-    return -ENOSPC;
+  return -ENOSPC;
 }
 
 struct bytemap_operations bmap_ops = {

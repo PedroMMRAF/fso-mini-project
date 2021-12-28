@@ -1,0 +1,32 @@
+D disk0 100
+F disk0 2
+M disk0 1
+B 0
+B 1
+B 2
+O /
+Y
+e AAAA 1
+e AAA 2
+e AA 3
+e A 4
+e BBBB 5
+c SUBD 1 D
+Y
+B 0
+B 1
+B 2
+t A
+t AAA
+t AA
+#t AAAA
+#t BBBB
+Y
+#C /
+O SUBD
+e BBBB 1
+Y
+C SUBD
+Y
+C /
+U

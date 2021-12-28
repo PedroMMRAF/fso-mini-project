@@ -1,0 +1,81 @@
+D disk0 100	Create OK
+F disk0	2	Formatting...
+Superblock:
+  fsmagic          = 0xf0f03410
+  nblocks          = 100
+  nbmapblocksinodes= 1
+  ninodeblocks     = 2
+  ninodes          = 96
+  nbmapblocksdata  = 1
+  ndatablocks      = 94
+  startInArea      = 2
+  startRotdir      = 4
+  startDtBmap      = 5
+  startDtArea      = 6
+  mounted          = yes
+Printing the large inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the small inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the data blocks bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Bmap set: bmap 0 target 32 value 1 entry 32
+Bmap set: bmap 0 target 47 value 1 entry 47
+Bmap set: bmap 1 target 0 value 1 entry 0
+Bmap set: bmap 1 target 15 value 1 entry 15
+Bmap set: bmap 2 target 0 value 1 entry 0
+Bmap set: bmap 2 target 17 value 1 entry 17
+Bmap set: bmap 2 target 34 value 1 entry 34
+Printing the large inodes bytemap ----------
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the small inodes bytemap ----------
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the data blocks bytemap ----------
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Bmap get free: 33
+Bmap get free: 33
+Bmap get free: 48
+Bmap get free: 1
+Bmap get free: 1
+Bmap get free: 1
+Bmap get free: 1
+Bmap set: bmap 0 target 32 value 1 entry 32
+Bmap set: bmap 0 target 47 value 1 entry 47
+Bmap set: bmap 1 target 0 value 1 entry 0
+Bmap set: bmap 1 target 15 value 1 entry 15
+Bmap set: bmap 2 target 0 value 1 entry 0
+Bmap set: bmap 2 target 17 value 1 entry 17
+Bmap set: bmap 2 target 34 value 1 entry 34
+Printing the small inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the large inodes bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Printing the data blocks bytemap ----------
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 

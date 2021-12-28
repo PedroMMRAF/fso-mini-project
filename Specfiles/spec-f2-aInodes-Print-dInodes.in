@@ -1,0 +1,28 @@
+D disk0 100
+F disk0 2
+M disk0 1
+B 0
+B 1
+B 2
+#I 0
+a 0 I
+a 15 I
+a 16 I
+a 31 I
+a 32 C
+a 47 C
+a 48 C
+a 63 C
+a 64 C
+a 79 C
+a 80 C
+a 95 C
+a 96 C
+I 1
+B 0
+B 1
+B 2
+B 0
+B 1
+B 2
+U
