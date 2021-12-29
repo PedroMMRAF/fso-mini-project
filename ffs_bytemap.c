@@ -128,11 +128,7 @@ static int bytemap_set(unsigned int bmapIDX, unsigned int entry,
   if (ercode < 0)
     return ercode;
 
-  /* ---- AULA1, only handles 1 byte allocated
-  if (bmap[entry] == set) return -EINVAL;
-  else bmap[entry]= set;
----- We now need to handle howMany bytes contiguously allocated */
-
+  // handle howMany bytes contiguously allocated
   for (int i = 0; i < howMany; i++)
   {
     if (bmap[entry + i] == set)

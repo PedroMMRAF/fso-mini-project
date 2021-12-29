@@ -205,7 +205,7 @@ void run_a(int argc, char* args[]) {
 void run_c(int argc, char* args[]) {
   int ercode;
 
-  ercode= file_ops.create_C(args[1], 1, args[3][0]);
+  ercode= file_ops.create_C(args[1], atoi(args[2]), args[3][0]);
   if (ercode < 0) printf("ERROR file_ops.create_C %s\n", strerror(-ercode));
 }
 

@@ -33,7 +33,8 @@ struct dir
 #define ROOT 0
 #define OTHER 1
 
-static struct dir cwd;
+static struct dir cwd[2];
+static int layer;
 
 /* ---------------- Some helper functions ---------------- */
 
@@ -49,7 +50,7 @@ static int getfree()
   //char str[FNAME_LENGTH + 1];
 
   for (int i = 0; i < DENTRIES_PER_BLOCK; i++) {
-    if (cwd.dirBlk.dir[i].name[0] == '\0')
+    if (cwd[layer].dirBlk.dir[i].name[0] == '\0')
       return i;
   }
 
@@ -62,11 +63,11 @@ static int findname(char *name)
 {
   char str[FNAME_LENGTH + 1];
 
-  if (!cwd.dbOpen)
+  if (!cwd[layer].dbOpen)
     return -ENOTDIR;
 
   for (int i = 0; i < DENTRIES_PER_BLOCK; i++) {
-    name2str(str, cwd.dirBlk.dir[i].name);
+    name2str(str, cwd[layer].dirBlk.dir[i].name);
     if (strcmp(name, str) == 0)
       return i;
   }
@@ -91,19 +92,43 @@ int dir_open(char *name)
     return -EINVAL;
 
   if (!strcmp(name, "/"))
-  { //Root Dir
-    ercode = disk_ops.read(blkOffset, cwd.dirBlk.data);
+  {
+    // Root dir
+    layer = ROOT;
+
+    ercode = disk_ops.read(blkOffset, cwd[layer].dirBlk.data);
     if (ercode < 0)
       return ercode;
 
 
-    cwd.dbOpen = 1;
-    cwd.lastEntry = 0;
+    cwd[layer].dbOpen = 1;
+    cwd[layer].lastEntry = 0;
 
     return 0;
   }
 
-  // NO CODE is included for SUBDIRECTORIES
+  ercode = findname(name);
+  if (ercode < 0)
+    return ercode;
+
+  ercode = cwd[layer].dirBlk.dir[ercode].inode;
+
+  union sml_lrg ino;
+
+  ercode = inode_ops.read(ercode, &ino);
+  if (ercode < 0)
+    return ercode;
+
+  layer = OTHER;
+
+  ercode = disk_ops.read(super_ops.getStartDtArea() + ino.smlino.start, cwd[layer].dirBlk.data);
+  if (ercode < 0)
+    return ercode;
+
+  cwd[layer].dbOpen = 1;
+  cwd[layer].lastEntry = 0;
+
+  // NO CODE is included for SUBDIRECTORIES */
 
   return 0;
 }
@@ -120,15 +145,18 @@ int dir_close(char *name)
 
   if (!strlen(name) || (strlen(name) > 4))
     return -EINVAL;
-  if (!cwd.dbOpen)
+  if (!cwd[layer].dbOpen)
     return -ENOTDIR;
 
-  ercode = disk_ops.write(blkOffset, cwd.dirBlk.data);
+  ercode = disk_ops.write(blkOffset, cwd[layer].dirBlk.data);
   if (ercode < 0)
     return ercode;
 
-  cwd.dbOpen = 0;
-  cwd.lastEntry = 0;
+  cwd[layer].dbOpen = 0;
+  cwd[layer].lastEntry = 0;
+
+  if (layer == OTHER)
+    layer = ROOT;
 
   // NO CODE is included for SUBDIRECTORIES
 
@@ -150,7 +178,7 @@ int dir_create(char *name, unsigned int inode)
 {
   int ercode;
 
-  if (!cwd.dbOpen)
+  if (!cwd[layer].dbOpen)
     return -ENOTDIR;
   if (!strlen(name) || (strlen(name) > 4))
     return -EINVAL;
@@ -164,8 +192,8 @@ int dir_create(char *name, unsigned int inode)
     return ercode;
 
   // Copy the data to the correct location (which is ercode)
-  memcpy(cwd.dirBlk.dir[ercode].name, name, 4);
-  cwd.dirBlk.dir[ercode].inode = inode;
+  memcpy(cwd[layer].dirBlk.dir[ercode].name, name, 4);
+  cwd[layer].dirBlk.dir[ercode].inode = inode;
 
   return 0;
 }
@@ -185,7 +213,7 @@ int dir_delete(char *name)
 {
   int ercode, inode2del;
 
-  if (!cwd.dbOpen)
+  if (!cwd[layer].dbOpen)
     return -ENOTDIR;
   if (!strlen(name) || (strlen(name) > 4))
     return -EINVAL;
@@ -195,8 +223,8 @@ int dir_delete(char *name)
     return -ENOENT;
 
   // Retrieve the inode from the dentry we're goind to "erase"
-  inode2del = cwd.dirBlk.dir[ercode].inode;
-  memset(cwd.dirBlk.dir + ercode, 0, sizeof(struct dentry));
+  inode2del = cwd[layer].dirBlk.dir[ercode].inode;
+  memset(cwd[layer].dirBlk.dir + ercode, 0, sizeof(struct dentry));
 
   return inode2del;
 }
@@ -214,18 +242,18 @@ int dir_delete(char *name)
 struct dentry *dir_read()
 {
 
-  if (!cwd.dbOpen)
+  if (!cwd[layer].dbOpen)
   {
     errno = -ENOTDIR;
     return NULL;
   } // just like readdir()
 
-  int i = cwd.lastEntry;
+  int i = cwd[layer].lastEntry;
   while (i < DENTRIES_PER_BLOCK)
   {
-    cwd.lastEntry++;
-    if (cwd.dirBlk.dir[i].name[0])
-      return &(cwd.dirBlk.dir[i]);
+    cwd[layer].lastEntry++;
+    if (cwd[layer].dirBlk.dir[i].name[0])
+      return &(cwd[layer].dirBlk.dir[i]);
     i++;
   }
 
@@ -242,10 +270,10 @@ struct dentry *dir_read()
 int dir_rewind()
 {
 
-  if (!cwd.dbOpen)
+  if (!cwd[layer].dbOpen)
     return -ENOTDIR;
 
-  cwd.lastEntry = 0;
+  cwd[layer].lastEntry = 0;
 
   return 0;
 }
@@ -257,18 +285,18 @@ int dir_print_table(int all)
   int left = DENTRIES_PER_BLOCK;
   char str[FNAME_LENGTH + 1];
 
-  if (cwd.dbOpen)
+  if (cwd[layer].dbOpen)
     return -ENOTDIR;
 
   printf("Printing %s directory entries -----------\n", (all ? "all" : "valid"));
 
   for (int i = 0; i < left; i++)
   {
-    name2str(str, cwd.dirBlk.dir[i].name);
+    name2str(str, cwd[layer].dirBlk.dir[i].name);
     if (all)
-      printf("%02d: %4s %02d\n", i, str, cwd.dirBlk.dir[i].inode);
+      printf("%02d: %4s %02d\n", i, str, cwd[layer].dirBlk.dir[i].inode);
     else if (strlen(str))
-      printf("%02d: %4s %02d\n", i, str, cwd.dirBlk.dir[i].inode);
+      printf("%02d: %4s %02d\n", i, str, cwd[layer].dirBlk.dir[i].inode);
   }
 
   return 0;
@@ -289,7 +317,7 @@ int readdir_print_table()
   while ((dePtr = dir_read()) != NULL)
   {
     name2str(str, dePtr->name);
-    printf("%02d: %4s %02d\n", cwd.lastEntry-1, str, dePtr->inode);
+    printf("%02d: %4s %02d\n", cwd[layer].lastEntry-1, str, dePtr->inode);
   }
 
   return errno; // if there was no error, errno == 0
